@@ -150,7 +150,10 @@ public class CalculationUtils {
         if (drag) {
             double A = 1; // Площадь сечения
             // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
-            double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
+            double drag_coefficient = 2;
+            if (U.m == 500) {
+                drag_coefficient = 0; // "Эмпирический коэффициент примерно равный 2"
+            }
             ArrayList<Double> w_earth = new ArrayList<>();
             Collections.addAll(w_earth, 0., 0., 7.2921158553E-5);
             ArrayList<Double> r = new ArrayList<>();
@@ -162,9 +165,9 @@ public class CalculationUtils {
             res.vy += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A);
             res.vz += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vz - v_earth.get(2), A);
 
-            System.out.println(Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A) + " " +
-                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A) + " " +
-                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vz - v_earth.get(2), A));
+//            System.out.println(Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A) + " " +
+//                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A) + " " +
+//                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vz - v_earth.get(2), A));
         }
 
 
@@ -408,6 +411,7 @@ public class CalculationUtils {
 
             tM += dtM;
 
+            //TODO Вынести переменную и добавить в GUI
             if (n == 10000) {
                 x1List.add(U1.x);
                 y1List.add(U1.y);
