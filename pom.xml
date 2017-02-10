@@ -12,6 +12,7 @@
         <math3.version>3.6.1</math3.version>
         <lombok.version>1.16.12</lombok.version>
         <guava.version>21.0</guava.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencies>
@@ -30,6 +31,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
         </dependency>
     </dependencies>
 
