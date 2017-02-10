@@ -1,15 +1,13 @@
 package com.github.qcha.utils;
 
-/**
- * Created by Maxim Tarasov on 27.12.2016.
- */
-public class Tensor {
+public final class Tensor {
+    public double ix;
+    public double iy;
+    public double iz;
 
-    public double ix, iy, iz;
-
-    public Tensor(double i, double j, double k) {
-        this.ix = i;
-        this.iy = j;
-        this.iz = k;
+    public Tensor(double ix, double jy, double kz) {
+        this.ix = ix;
+        this.iy = jy;
+        this.iz = kz;
     }
 }
