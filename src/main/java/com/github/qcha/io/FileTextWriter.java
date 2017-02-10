@@ -1,22 +1,21 @@
 package com.github.qcha.io;
 
+import com.google.common.base.Charsets;
 import lombok.Getter;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Getter
-public class FileTextWriter implements AutoCloseable {
+public class FileTextWriter {
     private final String name;
-    private final BufferedWriter writer;
+    private final Path file;
+    private final boolean appendable;
 
-    public FileTextWriter(String name, boolean appendable) throws IOException {
-        this.name = name;
-        final Path file = Paths.get(name);
+    public FileTextWriter(String name, boolean appendable) {
+        file = Paths.get(name);
 
         if (Files.notExists(file)) {
             throw new IllegalArgumentException(String.format("File with name: %s , doesn't exist.", name));
@@ -26,15 +25,15 @@ public class FileTextWriter implements AutoCloseable {
             throw new IllegalArgumentException(String.format("File with name: %s , hasn't write permissions.", name));
         }
 
-        writer = new BufferedWriter(new FileWriter(name, appendable));
+        this.name = name;
+        this.appendable = appendable;
     }
 
     public void writeLine(String line) throws IOException {
-        writer.write(line);
-    }
-
-    @Override
-    public void close() throws Exception {
-        writer.close();
+        if (appendable) {
+            com.google.common.io.Files.append(line, file.toFile(), Charsets.UTF_8);
+        } else {
+            com.google.common.io.Files.write(line, file.toFile(), Charsets.UTF_8);
+        }
     }
 }
