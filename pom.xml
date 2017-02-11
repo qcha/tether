@@ -10,6 +10,7 @@
 
     <properties>
         <math3.version>3.6.1</math3.version>
+        <commons.lang.version>3.5</commons.lang.version>
         <lombok.version>1.16.12</lombok.version>
         <guava.version>21.0</guava.version>
         <junit.version>4.12</junit.version>
@@ -36,6 +37,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang.version}</version>
         </dependency>
     </dependencies>
 
