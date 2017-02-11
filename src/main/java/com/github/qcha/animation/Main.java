@@ -21,35 +21,34 @@ import java.io.File;
 import java.nio.file.Paths;
 
 public class Main extends Application {
-
-    private static final String titleTxt = "Animation";
-    Stage primaryStage;
+    private static final String TITLE = "Animation";
 
     public static void main(String[] args) {
         Application.launch(args);
     }
 
     @Override
-    public void start(Stage stage) {
-
-        primaryStage = stage;
-        primaryStage.setTitle(titleTxt);
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle(TITLE);
 
         // Window label
-        Label label = new Label("Choose file to animate");
         HBox labelHb = new HBox();
         labelHb.setAlignment(Pos.CENTER);
-        labelHb.getChildren().add(label);
+        labelHb.getChildren().add(new Label("Choose file to animate"));
 
         // Buttons
         Button btnOneBodyOrbit = new Button("One Body Orbit Animation");
-        btnOneBodyOrbit.setOnAction(new ButtonOneBodyOrbitListener());
+        btnOneBodyOrbit.setOnAction(e -> oneBodyOrbitFileChooser(primaryStage));
+
         Button btnTwoBodiesOrbit = new Button("Two Bodies Orbit Animation");
-        btnTwoBodiesOrbit.setOnAction(new ButtonTwoBodiesOrbitListener());
+        btnTwoBodiesOrbit.setOnAction(e -> twoBodiesOrbitFileChooser(primaryStage));
+
         Button btnOneBodyRotation = new Button("One Body Rotation Animation");
-        btnOneBodyRotation.setOnAction(new ButtonOneBodyRotationListener());
+        btnOneBodyRotation.setOnAction(e -> oneBodyRotationFileChooser(primaryStage));
+
         Button btnTwoBodiesRotation = new Button("Two Bodies Rotation Animation");
-        btnTwoBodiesRotation.setOnAction(new ButtonTwoBodiesRotationListener());
+        btnTwoBodiesRotation.setOnAction(e -> twoBodiesRotationFileChooser(primaryStage));
+
         VBox buttonVb = new VBox(10);
         buttonVb.setAlignment(Pos.CENTER);
         buttonVb.getChildren().addAll(btnOneBodyOrbit, btnTwoBodiesOrbit, btnOneBodyRotation, btnTwoBodiesRotation);
@@ -70,35 +69,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private class ButtonOneBodyOrbitListener implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent e) {
-            oneBodyOrbitFileChooser();
-        }
-    }
-
-    private class ButtonTwoBodiesOrbitListener implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent e) {
-            twoBodiesOrbitFileChooser();
-        }
-    }
-
-    private class ButtonOneBodyRotationListener implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent e) {
-            oneBodyRotationFileChooser();
-        }
-    }
-
-    private class ButtonTwoBodiesRotationListener implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent e) {
-            twoBodiesRotationFileChooser();
-        }
-    }
-
-    private void oneBodyOrbitFileChooser() {
+    private void oneBodyOrbitFileChooser(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File selectedFile = fileChooser.showOpenDialog(null);
@@ -110,7 +81,7 @@ public class Main extends Application {
         }
     }
 
-    private void twoBodiesOrbitFileChooser() {
+    private void twoBodiesOrbitFileChooser(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File selectedFile = fileChooser.showOpenDialog(null);
@@ -122,7 +93,7 @@ public class Main extends Application {
         }
     }
 
-    private void oneBodyRotationFileChooser() {
+    private void oneBodyRotationFileChooser(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File selectedFile = fileChooser.showOpenDialog(null);
@@ -134,7 +105,7 @@ public class Main extends Application {
         }
     }
 
-    private void twoBodiesRotationFileChooser() {
+    private void twoBodiesRotationFileChooser(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File selectedFile = fileChooser.showOpenDialog(null);
