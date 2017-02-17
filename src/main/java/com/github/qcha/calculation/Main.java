@@ -151,14 +151,15 @@ public class Main extends Application {
 //        double v12 = w * x12;
         double r1 = rO - (m2 * lGood) / (m1 + m2);
         double r2 = lGood + r1;
-        System.out.println(r1);
-        System.out.println(r2);
-        System.out.println(w * r1);
-        System.out.println(w * r2);
+        System.out.println("r1 = " + r1);
+        System.out.println("r2 = " + r2);
+        System.out.println("v1 = " + w * r1);
+        System.out.println("v2 = " + w * r2);
         System.out.println(r2 - r1);
         double T = (2 * Math.PI) / w;
-        System.out.println("T");
-        System.out.println(T);
+        System.out.println("T = " + T);
+
+
 
 //        double x1 = rO + lGood * mPr / m2;
 //        double x2 = rO - lGood * mPr / m1;

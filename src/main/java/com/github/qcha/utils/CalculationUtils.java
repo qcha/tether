@@ -150,15 +150,15 @@ public class CalculationUtils {
         if (drag) {
             double A = 1; // Площадь сечения
             // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
-            double drag_coefficient = 2;
+            double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
             if (U.m == 500) {
-                drag_coefficient = 0; // "Эмпирический коэффициент примерно равный 2"
+                drag_coefficient = 0;
             }
             ArrayList<Double> w_earth = new ArrayList<>();
             Collections.addAll(w_earth, 0., 0., 7.2921158553E-5);
             ArrayList<Double> r = new ArrayList<>();
             Collections.addAll(r, U.x, U.y, U.z);
-            List<Double> v_earth = VectorsAlgebra.multV(w_earth, r);// Поправка для нахождения относительной скорости
+            List<Double> v_earth = VectorsAlgebra.multV(w_earth, r); // Поправка для нахождения относительной скорости
             double radv = Math.sqrt(Math.pow(U.x, 2) + Math.pow(U.y, 2) + Math.pow(U.z, 2)); // Радиус-вектор
 
             res.vx += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A);
