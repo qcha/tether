@@ -4,6 +4,7 @@ package com.github.qcha.animation;
  * Created by Maxim Tarasov on 12.10.2016.
  */
 
+import com.github.qcha.model.Material;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;

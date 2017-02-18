@@ -17,7 +17,7 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import com.github.qcha.utils.Form;
-import com.github.qcha.utils.Material;
+import com.github.qcha.model.Material;
 
 import java.io.IOException;
 import java.nio.file.Files;
