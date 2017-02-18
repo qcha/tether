@@ -121,48 +121,64 @@ public class Main extends Application {
 //        Quaternion q2 = new Quaternion(0, 5, 6, 7);
 //        System.out.println(Quaternion.quatMultQuat(q1, q2));
 //        System.out.println(Quaternion.quatMultQuat(q2, q1));
-        double m1 = 100;
-        double m2 = 500;
-        double rO = 6700000;
+        double m1 = 100; // масса первого тела
+        double m2 = 500; // масса второго тела
+        double rO = 6500000; // координаты центра масс: (6500000; 0; 0)
 //        double x1 = 6700000;
 //        double a2 = 6700200;
-        double mu = 398600.4415E9;
-        double l = 100;
-        double k = 100;
+        double mu = 398600.4415E9; // гравитационный параметр
+        double l = 100; // длина троса
+        double k = 100; // жесткость троса
 //        double b = 0;
 //        double c = Math.sqrt(a * a + b * b);
 //        double v1 = Math.sqrt(398600.4415E9 / x1);
-        double vO = Math.sqrt(398600.4415E9 / rO);
+        double vO = Math.sqrt(mu / rO); // скорость центра масс
 //        double v2 = Math.sqrt(398600.4415E9 / a2);
-        double w = vO / rO;
+        double w = vO / rO; // угловая скорость (кол-во движения)
 //        System.out.println(vO);
 //        System.out.println(w * x1);
 //        System.out.println(w * a2);
-        System.out.println(w);
+        System.out.println("w = " + w);
 
-        double mPr = (m1 * m2) / (m1 + m2);
-        double lGood = (k * l) / (k - 3 * w * w * mPr);
+        double mpr = (m1 * m2) / (m1 + m2); // приведенная масса
+        double ldl = (k * l) / (k - 3 * w * w * mpr); // длина растянутого троса
         System.out.println("!!!");
-        System.out.println(lGood);
+        System.out.println("ldl = " + ldl);
 
-//        double x11 = rO - lGood / 2;
-//        double x12 = rO + lGood / 2;
+//        double x11 = rO - ldl / 2;
+//        double x12 = rO + ldl / 2;
 //        double v11 = w * x11;
 //        double v12 = w * x12;
-        double r1 = rO - (m2 * lGood) / (m1 + m2);
-        double r2 = lGood + r1;
+        double r1 = rO - (m2 * ldl) / (m1 + m2); // координата х первого тела
+        double r2 = ldl + r1; // координата х второго тела
         System.out.println("r1 = " + r1);
         System.out.println("r2 = " + r2);
-        System.out.println("v1 = " + w * r1);
-        System.out.println("v2 = " + w * r2);
+        double v1 = w * r1; // скорость первого тела
+        double v2 = w * r2; // скорость второго тела
+        System.out.println("v1 = " + v1);
+        System.out.println("v2 = " + v2);
         System.out.println(r2 - r1);
         double T = (2 * Math.PI) / w;
         System.out.println("T = " + T);
 
 
+        double earthR = 6371000; // средний радиус Земли
+        double ha = r1 - earthR; // высота первого тела над уровнем моря
+        System.out.println("ha = " + ha);
+        double ro = 2.44E-08 * Math.exp((120 - ha / 1000) / 9.473); // плотность атмосферы на высоте ha
+        System.out.println("ro = " + ro);
+        double beta = m1 / 2; // баллистический коэффициент первого тела
+        // формула beta = M / (A * Cd), где А у меня = 1, а Cd = 2
+        double acos = ro * v1 * v1 / (w * w * beta * 6 * ldl); // арккосинус из присланной Вами формулы
+        double acs = acos - (int) acos;
+        double alpha = Math.PI - Math.acos(acs);
+        System.out.println("acos = " + acos);
+        System.out.println("alpha = " + ((alpha * 180) / Math.PI));
+        System.out.println("x = " + (r2 - (ldl * Math.cos(Math.toRadians(15)))));
+        System.out.println("y = " + (ldl * Math.sin(Math.toRadians(15))));
 
-//        double x1 = rO + lGood * mPr / m2;
-//        double x2 = rO - lGood * mPr / m1;
+//        double x1 = rO + ldl * mpr / m2;
+//        double x2 = rO - ldl * mpr / m1;
 //        System.out.println(x1);
 //        System.out.println(x2);
 //        double kdl1 = m1 * (w * w * x1 - 398600.4415E9 / (x1 * x1));

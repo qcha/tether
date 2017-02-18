@@ -151,6 +151,7 @@ public class CalculationUtils {
             double A = 1; // Площадь сечения
             // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
             double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
+            double earth_radius = 6371000;
             if (U.m == 500) {
                 drag_coefficient = 0;
             }
@@ -159,11 +160,12 @@ public class CalculationUtils {
             ArrayList<Double> r = new ArrayList<>();
             Collections.addAll(r, U.x, U.y, U.z);
             List<Double> v_earth = VectorsAlgebra.multV(w_earth, r); // Поправка для нахождения относительной скорости
+            // TODO check if here needs radv or (radv - radEarth)
             double radv = Math.sqrt(Math.pow(U.x, 2) + Math.pow(U.y, 2) + Math.pow(U.z, 2)); // Радиус-вектор
 
-            res.vx += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A);
-            res.vy += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A);
-            res.vz += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vz - v_earth.get(2), A);
+            res.vx += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A);
+            res.vy += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A);
+            res.vz += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A);
 
 //            System.out.println(Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A) + " " +
 //                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A) + " " +

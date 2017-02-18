@@ -7,7 +7,7 @@ import java.util.Collections;
 /**
  * Created by Maxim Tarasov on 14.08.2016.
  * This class calculates the geocentric equatorial position vector for the moon given the julian date.
- * Outputs: ijk position vector of moon (er), right ascension (rad), declination (rad).
+ * Function moonPosition outputs: ijk position vector of moon (er), right ascension (rad), declination (rad).
  */
 public class MoonPosition {
 
