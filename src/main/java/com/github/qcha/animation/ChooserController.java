@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+//todo need to rewrite it
 /**
  * управление котроллеров на маске выбора файла для анимирования
  **/

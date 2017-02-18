@@ -1,9 +1,5 @@
 package com.github.qcha.utils;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -19,11 +15,11 @@ public class Drag {
     }
 
     public static double force(double c, double ro, List<Double> v, double s) {
-        double a = VectorsAlgebra.absoluteValue(v);
-        return (c * ro * a * a * s) / 2;
+        return (c * ro * s * Math.pow(VectorsAlgebra.absoluteValue(v), 2)) / 2;
     }
 
     public static double exponentialModelDensity(double h) {
+        //todo move it to the constants
         double initialDensity = 0, ha = 0, heightScale = 0;
 
         // TODO Тут нужно что-то получше SOUT'а
@@ -40,11 +36,15 @@ public class Drag {
     }
 
     public static double earthsRotation(double phi, double h) {
+        //todo move it to the constants class
         double Re = 6378100.0;
         double Rp = 6356800.0;
         double w = 7.2921158553E-5;
 
-        return ((Re * Rp) / (Math.sqrt(Rp * Rp + Re * Re * Math.tan(phi) * Math.tan(phi))) +
-                (Rp * Rp * h) / (Math.sqrt(Rp * Rp + Re * Re * Math.tan(phi) * Math.tan(phi)))) * w;
+        double rp2pow = Math.pow(Rp, 2);
+        double re2pow = Math.pow(Re, 2);
+
+        return ((Re * Rp) / (Math.sqrt(rp2pow + re2pow * Math.tan(phi) * Math.tan(phi))) +
+                (rp2pow * h) / (Math.sqrt(rp2pow + re2pow * Math.tan(phi) * Math.tan(phi)))) * w;
     }
 }
