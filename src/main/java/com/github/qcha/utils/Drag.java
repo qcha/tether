@@ -23,7 +23,7 @@ public class Drag {
         double initialDensity = 0, ha = 0, heightScale = 0;
 
         // TODO Тут нужно что-то получше SOUT'а
-        AltitudeLevelsForDrag resultSet = AltitudeLevelsForDrag.inInterval(h);
+        AltitudeLevel resultSet = AltitudeLevel.inInterval(h);
         if (resultSet.getBottomHeight() == 0 && resultSet.getHeightScale() == 0 && resultSet.getInitialDensity() == 0) {
             System.out.println("ERROR!");
         } else {
