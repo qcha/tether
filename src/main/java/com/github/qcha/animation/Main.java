@@ -8,15 +8,12 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     private static final String TITLE_TXT = "Animation";
-    private static final int SCENE_WIDTH = 300;
-    private static final int SCENE_HEIGHT = 280;
-
 
     @Override
     public void start(Stage stage) throws Exception {
         ChooserController.setStage(stage);
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Chooser.fxml"));
-        Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle(TITLE_TXT);

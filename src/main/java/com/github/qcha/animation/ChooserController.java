@@ -10,7 +10,7 @@ import java.util.Objects;
 
 //todo need to rewrite it
 /**
- * управление котроллеров на маске выбора файла для анимирования
+ * handle of controllers on the selection of animation mask
  **/
 
 public class ChooserController {
