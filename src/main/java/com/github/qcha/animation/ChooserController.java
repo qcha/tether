@@ -8,11 +8,9 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-//todo need to rewrite it
 /**
- * handle of controllers on the selection of animation mask
+ * Controller for fxml animation application.
  **/
-
 public class ChooserController {
     private static Stage stage;
     private File fileToAnimate;
