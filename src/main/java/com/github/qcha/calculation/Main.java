@@ -1,5 +1,6 @@
 package com.github.qcha.calculation;
 
+import com.github.qcha.utils.Drag;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -121,9 +122,12 @@ public class Main extends Application {
 //        Quaternion q2 = new Quaternion(0, 5, 6, 7);
 //        System.out.println(Quaternion.quatMultQuat(q1, q2));
 //        System.out.println(Quaternion.quatMultQuat(q2, q1));
+
+        // Данные для относительного равновесия (гравитационная ориентация)
         double m1 = 100; // масса первого тела
         double m2 = 500; // масса второго тела
-        double rO = 6500000; // координаты центра масс: (6500000; 0; 0)
+        double rO = 6450000; // координаты центра масс: (6500000; 0; 0)
+        double c = 2;
 //        double x1 = 6700000;
 //        double a2 = 6700200;
         double mu = 398600.4415E9; // гравитационный параметр
@@ -161,11 +165,11 @@ public class Main extends Application {
         double T = (2 * Math.PI) / w;
         System.out.println("T = " + T);
 
-
         double earthR = 6371000; // средний радиус Земли
         double ha = r1 - earthR; // высота первого тела над уровнем моря
         System.out.println("ha = " + ha);
-        double ro = 2.44E-08 * Math.exp((120 - ha / 1000) / 9.473); // плотность атмосферы на высоте ha
+//        double ro = 2.44E-08 * Math.exp((120 - ha / 1000) / 9.473); // плотность атмосферы на высоте ha
+        double ro = Drag.exponentialModelDensity(ha); // плотность атмосферы на высоте ha
         System.out.println("ro = " + ro);
         double beta = m1 / 2; // баллистический коэффициент первого тела
         // формула beta = M / (A * Cd), где А у меня = 1, а Cd = 2
@@ -176,6 +180,18 @@ public class Main extends Application {
         System.out.println("alpha = " + ((alpha * 180) / Math.PI));
         System.out.println("x = " + (r2 - (ldl * Math.cos(Math.toRadians(15)))));
         System.out.println("y = " + (ldl * Math.sin(Math.toRadians(15))));
+
+        // Косое относительное равновесие в атмосфере
+        double bb = m1 / c; // m1 OR m2 ???
+        double dpb = k * (rO + ldl) / (k - 3 * w * w * mpr);
+        double smth = ro * vO * vO / (6 * w * w * dpb * bb);
+        System.out.println("smth: " + smth);
+        double acos2 = Math.acos(smth);
+        System.out.println("acos2: " + acos2);
+        System.out.println(Math.acos(0));
+        double alpha2 = Math.PI - acos2;
+        System.out.println("alpha2: " + alpha2);
+        System.out.println("alpha2degrees: " + Math.toDegrees(alpha2));
 
 //        double x1 = rO + ldl * mpr / m2;
 //        double x2 = rO - ldl * mpr / m1;

@@ -20,6 +20,7 @@ public class Drag {
 
     public static double exponentialModelDensity(double h) {
         //todo move it to the constants
+        // that's not constants, there is just initialization
         double initialDensity = 0, ha = 0, heightScale = 0;
 
         // TODO Тут нужно что-то получше SOUT'а
