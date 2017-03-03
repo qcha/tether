@@ -153,10 +153,16 @@ public class Main extends Application {
 //        double x12 = rO + ldl / 2;
 //        double v11 = w * x11;
 //        double v12 = w * x12;
+        double r10 = (m2 * ldl) / (m1 + m2);
+        double r20 = (m1 * ldl) / (m1 + m2);
         double r1 = rO - (m2 * ldl) / (m1 + m2); // координата х первого тела
-        double r2 = ldl + r1; // координата х второго тела
+//        double r2 = ldl + r1; // координата х второго тела
+        double r2 = rO + (m1 * ldl) / (m1 + m2);
+        ; // координата х второго тела
+//        double r3 = rO + (m1 * ldl) / (m1 + m2);
         System.out.println("r1 = " + r1);
         System.out.println("r2 = " + r2);
+//        System.out.println("r3 = " + r3);
         double v1 = w * r1; // скорость первого тела
         double v2 = w * r2; // скорость второго тела
         System.out.println("v1 = " + v1);
@@ -165,6 +171,7 @@ public class Main extends Application {
         double T = (2 * Math.PI) / w;
         System.out.println("T = " + T);
 
+        // Косое относительное равновесие с учетом атмосферы
         double earthR = 6371000; // средний радиус Земли
         double ha = r1 - earthR; // высота первого тела над уровнем моря
         System.out.println("ha = " + ha);
@@ -192,6 +199,16 @@ public class Main extends Application {
         double alpha2 = Math.PI - acos2;
         System.out.println("alpha2: " + alpha2);
         System.out.println("alpha2degrees: " + Math.toDegrees(alpha2));
+        double beta2 = alpha2 - Math.PI / 2;
+        System.out.println("beta2: " + beta2);
+        System.out.println("r1x: " + (rO - r10 * Math.cos(beta2)));
+        System.out.println("r1y: " + (r10 * Math.sin(beta2)));
+        System.out.println("r2x: " + (r20 * Math.cos(beta2) + rO));
+        System.out.println("r2y: " + (r20 * Math.sin(beta2)));
+//        System.out.println(Math.sqrt((r10 * Math.sin(beta2)) * (r10 * Math.sin(beta2)) +
+//                (r10 * Math.cos(beta2)) * (r10 * Math.cos(beta2))) +
+//                Math.sqrt((r20 * Math.sin(beta2)) * (r20 * Math.sin(beta2)) +
+//                        (r20 * Math.cos(beta2)) * (r20 * Math.cos(beta2))));
 
 //        double x1 = rO + ldl * mpr / m2;
 //        double x2 = rO - ldl * mpr / m1;

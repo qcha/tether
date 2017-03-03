@@ -267,7 +267,8 @@ public class Quaternion {
 //            System.out.println("!!!");
             // Перевод F(tension) ECI -> Body
             List<Double> tensionFBody = new ArrayList<>();
-            Quaternion tensionFECI = new Quaternion(0, CalculationUtils.tensionF);
+            List<Double> tensionFList = new ArrayList<>(Arrays.asList(CalculationUtils.tensionF[0], CalculationUtils.tensionF[1], CalculationUtils.tensionF[2]));
+            Quaternion tensionFECI = new Quaternion(0, tensionFList);
             Quaternion L = new Quaternion(U.i, U.j, U.k, U.l);
             L = Quaternion.conjugate(L);
             Quaternion tensionFBodyQ = Quaternion.quatMultQuat(Quaternion.quatMultQuat(L, tensionFECI), Quaternion.conjugate(L));

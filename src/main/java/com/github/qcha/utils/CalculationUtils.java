@@ -11,10 +11,14 @@ public class CalculationUtils {
     public static File qfileName;
     public static File fileNameFull;
     public static double i1x, i1y, i1z, i2x, i2y, i2z;
-    public static List<Double> tensionF;
+
+    // Tension block
+//    public static List<Double> tensionF;
+    public static double[] tensionF;
     public static boolean tensionFFlag = false;
+    ///////////////////////////////////////////
     public static List<Double> sunPos;
-    public static boolean testflag;
+    public static boolean sunSignflag;
 
     CalculationUtils(double x, double y, double z, double vx, double vy, double vz, double m) {
         this.x = x;
@@ -134,9 +138,9 @@ public class CalculationUtils {
         if (sunpres) {
             TimeZone timeZone = TimeZone.getTimeZone("GMT");
             Calendar c = Calendar.getInstance(timeZone);
-            testflag = false;
+            sunSignflag = false;
             if (!SunRadiationPressure.sunShadowSign(c, U, 6371000)) {
-                testflag = true;
+                sunSignflag = true;
                 double A = 1; // Площадь сечения
                 double C = 1; // Передача импульса за счёт поглощения и отражения
                 List<Double> sunPres = SunRadiationPressure.force(A, C, c);
@@ -152,7 +156,7 @@ public class CalculationUtils {
             // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
             double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
             double earth_radius = 6371000;
-            if (U.m == 500) {
+            if (U.m == 100) {
                 drag_coefficient = 0;
             }
             ArrayList<Double> w_earth = new ArrayList<>();
@@ -181,16 +185,16 @@ public class CalculationUtils {
 
         if (tensionFFlag) {
 //            System.out.println("!!!");
-            ArrayList<Double> r1 = new ArrayList<>(Arrays.asList(U1.x, U1.y, U1.z));
-            ArrayList<Double> r2 = new ArrayList<>(Arrays.asList(U2.x, U2.y, U2.z));
-            List<Double> r = VectorsAlgebra.difference(r2, r1);
+            double[] r1 = {U1.x, U1.y, U1.z};
+            double[] r2 = {U2.x, U2.y, U2.z};
+            double[] r = VectorsAlgebra.difference(r2, r1);
             double dx = VectorsAlgebra.absoluteValue(r) - l;
             r = VectorsAlgebra.normalize(r);
 
             tensionF = VectorsAlgebra.constMult(k * dx / 1000, r);
-            res.vx += tensionF.get(0);
-            res.vy += tensionF.get(1);
-            res.vz += tensionF.get(2);
+            res.vx += tensionF[0];
+            res.vy += tensionF[1];
+            res.vz += tensionF[2];
         }
 //        else {
 //            tensionFFlag = false;
@@ -280,7 +284,7 @@ public class CalculationUtils {
             String text = String.valueOf(U.x) + "\t\t\t" + String.valueOf(U.y) + "\t\t\t" + String.valueOf(U.z) + "\t\t\t" + String.valueOf(U.vx)
                     + "\t\t\t" + String.valueOf(U.vy) + "\t\t\t" + String.valueOf(U.vz)
 //                    + "\t\t\t" + String.valueOf(sunPos.get(0)) + "\t\t\t" + String.valueOf(sunPos.get(1)) + "\t\t\t" + String.valueOf(sunPos.get(2))
-//                    + "\t\t\t" + testflag
+//                    + "\t\t\t" + sunSignflag
                     + "\t\t\t" + String.valueOf(Math.sqrt(U.x * U.x + U.y * U.y + U.z * U.z)) + "\n";
             write(fileName.getName(), text);
         }
@@ -313,18 +317,18 @@ public class CalculationUtils {
         Tensor I2 = new Tensor(j2xx, j2yy, j2zz);
 
 
-        Vector<Double> x1List = new Vector(15000);
-        Vector<Double> y1List = new Vector(15000);
-        Vector<Double> z1List = new Vector(15000);
-        Vector<Double> v1xList = new Vector(15000);
-        Vector<Double> v1yList = new Vector(15000);
-        Vector<Double> v1zList = new Vector(15000);
-        Vector<Double> x2List = new Vector(15000);
-        Vector<Double> y2List = new Vector(15000);
-        Vector<Double> z2List = new Vector(15000);
-        Vector<Double> v2xList = new Vector(15000);
-        Vector<Double> v2yList = new Vector(15000);
-        Vector<Double> v2zList = new Vector(15000);
+        List<Double> x1List = new ArrayList<>();
+        List<Double> y1List = new ArrayList<>();
+        List<Double> z1List = new ArrayList<>();
+        List<Double> v1xList = new ArrayList<>();
+        List<Double> v1yList = new ArrayList<>();
+        List<Double> v1zList = new ArrayList<>();
+        List<Double> x2List = new ArrayList<>();
+        List<Double> y2List = new ArrayList<>();
+        List<Double> z2List = new ArrayList<>();
+        List<Double> v2xList = new ArrayList<>();
+        List<Double> v2yList = new ArrayList<>();
+        List<Double> v2zList = new ArrayList<>();
         List<List<Double>> resList = new ArrayList<>();
         CalculationUtils U1 = new CalculationUtils(x1M, y1M, z1M, V1xM, V1yM, V1zM, 100);
         CalculationUtils U2 = new CalculationUtils(x2M, y2M, z2M, V2xM, V2yM, V2zM, 500);
@@ -333,8 +337,8 @@ public class CalculationUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh-mm");
         fileName = new File("TwoBody_" + dateFormat.format(d) + ".txt");
 
-        ArrayList<Double> r1 = new ArrayList<>(Arrays.asList(U1.x, U1.y, U1.z));
-        ArrayList<Double> r2 = new ArrayList<>(Arrays.asList(U2.x, U2.y, U2.z));
+        List<Double> r1 = new ArrayList<>(Arrays.asList(U1.x, U1.y, U1.z));
+        List<Double> r2 = new ArrayList<>(Arrays.asList(U2.x, U2.y, U2.z));
         List<Double> r = VectorsAlgebra.difference(r2, r1);
         double dx = VectorsAlgebra.absoluteValue(r) - l;
         tensionFFlag = dx > 0;
