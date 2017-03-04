@@ -38,7 +38,7 @@ public class CalculationUtils {
 //    }
 
     public static CalculationUtils sum(CalculationUtils a, CalculationUtils b) {
-        CalculationUtils c = new CalculationUtils(0, 0, 0, 0, 0, 0, 0);
+        CalculationUtils c = new CalculationUtils(0, 0, 0, 0, 0, 0, a.m);
         c.x = a.x + b.x;
         c.y = a.y + b.y;
         c.z = a.z + b.z;
@@ -71,7 +71,7 @@ public class CalculationUtils {
     }
 
     public static CalculationUtils mult(CalculationUtils b, double a) {
-        CalculationUtils c = new CalculationUtils(0, 0, 0, 0, 0, 0, 0);
+        CalculationUtils c = new CalculationUtils(0, 0, 0, 0, 0, 0, b.m);
         c.x = a * b.x;
         c.y = a * b.y;
         c.z = a * b.z;
@@ -156,8 +156,11 @@ public class CalculationUtils {
             // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
             double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
             double earth_radius = 6371000;
-            if (U.m == 100) {
+            if (U.m == 500) {
                 drag_coefficient = 0;
+//                System.out.println(U.m);
+            } else {
+//                System.out.println(U.m);
             }
             ArrayList<Double> w_earth = new ArrayList<>();
             Collections.addAll(w_earth, 0., 0., 7.2921158553E-5);
@@ -167,9 +170,9 @@ public class CalculationUtils {
             // TODO check if here needs radv or (radv - radEarth)
             double radv = Math.sqrt(Math.pow(U.x, 2) + Math.pow(U.y, 2) + Math.pow(U.z, 2)); // Радиус-вектор
 
-            res.vx += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A);
-            res.vy += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A);
-            res.vz += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A);
+            res.vx -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A);
+            res.vy -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A);
+            res.vz -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A);
 
 //            System.out.println(Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A) + " " +
 //                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A) + " " +
@@ -329,6 +332,7 @@ public class CalculationUtils {
         List<Double> v2xList = new ArrayList<>();
         List<Double> v2yList = new ArrayList<>();
         List<Double> v2zList = new ArrayList<>();
+        List<Boolean> flagList = new ArrayList<>();
         List<List<Double>> resList = new ArrayList<>();
         CalculationUtils U1 = new CalculationUtils(x1M, y1M, z1M, V1xM, V1yM, V1zM, 100);
         CalculationUtils U2 = new CalculationUtils(x2M, y2M, z2M, V2xM, V2yM, V2zM, 500);
@@ -375,7 +379,6 @@ public class CalculationUtils {
 //            v1xList.add(U1.vx);
 //            v1yList.add(U1.vy);
 //            v1zList.add(U1.vz);
-
             k12 = mult(F2(U2, U1, tM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
             k22 = mult(F2(sum(U2, mult(0.5, k12)), U1, tM + 0.5 * dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
             k32 = mult(F2(sum(U2, mult(0.5, k22)), U1, tM + 0.5 * dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
@@ -418,7 +421,7 @@ public class CalculationUtils {
             tM += dtM;
 
             //TODO Вынести переменную и добавить в GUI
-            if (n == 10000) {
+            if (n == 1000) {
                 x1List.add(U1.x);
                 y1List.add(U1.y);
                 z1List.add(U1.z);
@@ -431,6 +434,7 @@ public class CalculationUtils {
                 v2xList.add(U2.vx);
                 v2yList.add(U2.vy);
                 v2zList.add(U2.vz);
+                flagList.add(tensionFFlag);
 //                Quaternion N1 = Quaternion.normalize(Q1);
 //                Quaternion N2 = Quaternion.normalize(Q2);
 
@@ -477,6 +481,7 @@ public class CalculationUtils {
                     + "\t\t\t" + String.valueOf(v2xList.get(i)) + "\t\t\t" + String.valueOf(v2yList.get(i)) + "\t\t\t" + String.valueOf(v2zList.get(i))
 //                    + "\t\t\t" + String.valueOf(Math.sqrt(U1.x * U1.x + U1.y * U1.y + U1.z * U1.z))
 //                    + "\t\t\t" + String.valueOf(Math.sqrt(U2.x * U2.x + U2.y * U2.y + U2.z * U2.z))
+                    + "\t\t\t" + String.valueOf(flagList.get(i))
                     + "\n";
             write(fileName.getName(), text);
         }
