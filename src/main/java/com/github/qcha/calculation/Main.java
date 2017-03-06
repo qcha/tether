@@ -1,6 +1,7 @@
 package com.github.qcha.calculation;
 
 import com.github.qcha.utils.Drag;
+import com.github.qcha.utils.VectorsAlgebra;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -10,6 +11,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class Main extends Application {
@@ -124,9 +129,9 @@ public class Main extends Application {
 //        System.out.println(Quaternion.quatMultQuat(q2, q1));
 
         // Данные для относительного равновесия (гравитационная ориентация)
-        double m1 = 100; // масса первого тела
-        double m2 = 500; // масса второго тела
-        double rO = 6450000; // координаты центра масс: (6500000; 0; 0)
+        double m1 = 500; // масса первого тела
+        double m2 = 100; // масса второго тела
+        double rO = 6500000; // координаты центра масс: (6500000; 0; 0)
         double c = 2;
 //        double x1 = 6700000;
 //        double a2 = 6700200;
@@ -178,33 +183,49 @@ public class Main extends Application {
 //        double ro = 2.44E-08 * Math.exp((120 - ha / 1000) / 9.473); // плотность атмосферы на высоте ha
         double ro = Drag.exponentialModelDensity(ha); // плотность атмосферы на высоте ha
         System.out.println("ro = " + ro);
-        double beta = m1 / 2; // баллистический коэффициент первого тела
-        // формула beta = M / (A * Cd), где А у меня = 1, а Cd = 2
-        double acos = ro * v1 * v1 / (w * w * beta * 6 * ldl); // арккосинус из присланной Вами формулы
-        double acs = acos - (int) acos;
-        double alpha = Math.PI - Math.acos(acs);
-        System.out.println("acos = " + acos);
-        System.out.println("alpha = " + ((alpha * 180) / Math.PI));
-        System.out.println("x = " + (r2 - (ldl * Math.cos(Math.toRadians(15)))));
-        System.out.println("y = " + (ldl * Math.sin(Math.toRadians(15))));
+//        double beta = m1 / c; // баллистический коэффициент первого тела
+//        // формула beta = M / (A * Cd), где А у меня = 1, а Cd = 2
+//        double acos = ro * v1 * v1 / (w * w * beta * 6 * ldl); // арккосинус из присланной Вами формулы
+//        double acs = acos - (int) acos;
+//        double alpha = Math.PI - Math.acos(acs);
+//        System.out.println("acos = " + acos);
+//        System.out.println("alpha = " + ((alpha * 180) / Math.PI));
+//        System.out.println("x = " + (r2 - (ldl * Math.cos(Math.toRadians(15)))));
+//        System.out.println("y = " + (ldl * Math.sin(Math.toRadians(15))));
 
         // Косое относительное равновесие в атмосфере
-        double bb = m1 / c; // m1 OR m2 ???
+        double bb = mpr / c; // m1 OR m2 ???
         double dpb = k * (rO + ldl) / (k - 3 * w * w * mpr);
+        System.out.println("dpb = " + dpb);
         double smth = ro * vO * vO / (6 * w * w * dpb * bb);
         System.out.println("smth: " + smth);
         double acos2 = Math.acos(smth);
-        System.out.println("acos2: " + acos2);
-        System.out.println(Math.acos(0));
+//        System.out.println("acos2: " + acos2);
+//        System.out.println(Math.acos(0));
         double alpha2 = Math.PI - acos2;
         System.out.println("alpha2: " + alpha2);
         System.out.println("alpha2degrees: " + Math.toDegrees(alpha2));
         double beta2 = alpha2 - Math.PI / 2;
         System.out.println("beta2: " + beta2);
+        System.out.println("beta2degrees: " + Math.toDegrees(beta2));
         System.out.println("r1x: " + (rO - r10 * Math.cos(beta2)));
-        System.out.println("r1y: " + (r10 * Math.sin(beta2)));
-        System.out.println("r2x: " + (r20 * Math.cos(beta2) + rO));
-        System.out.println("r2y: " + (r20 * Math.sin(beta2)));
+        System.out.println("r1y: " + (0 - r10 * Math.sin(beta2)));
+        System.out.println("r2x: " + (rO + r20 * Math.cos(beta2)));
+        System.out.println("r2y: " + (0 + r20 * Math.sin(beta2)));
+        System.out.println("v1x = " + (-v1 * Math.sin(beta2)));
+        System.out.println("v1y = " + (v1 * Math.cos(beta2)));
+        System.out.println("v2x = " + (v2 * Math.sin(beta2)));
+        System.out.println("v2y = " + (v2 * Math.cos(beta2)));
+
+        //CHECK
+//        double re = 6371000.0;
+//        ArrayList<Double> w_earth = new ArrayList<>();
+//        Collections.addAll(w_earth, 0., 0., 7.2921158553E-5);
+//        ArrayList<Double> r = new ArrayList<>();
+//        Collections.addAll(r, re * Math.sin(Math.toRadians(30)), 0., re * Math.cos(Math.toRadians(30)));
+//        List<Double> v_earth = VectorsAlgebra.multV(w_earth, r);
+//        System.out.println(String.valueOf(VectorsAlgebra.absoluteValue(v_earth)));
+//
 //        System.out.println(Math.sqrt((r10 * Math.sin(beta2)) * (r10 * Math.sin(beta2)) +
 //                (r10 * Math.cos(beta2)) * (r10 * Math.cos(beta2))) +
 //                Math.sqrt((r20 * Math.sin(beta2)) * (r20 * Math.sin(beta2)) +

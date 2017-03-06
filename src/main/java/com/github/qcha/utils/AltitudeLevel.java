@@ -44,11 +44,10 @@ enum AltitudeLevel {
         this.heightScale = heightScale;
     }
 
-    //todo rename h
-    public static AltitudeLevel inInterval(double h) {
+    public static AltitudeLevel inInterval(double height) {
         //todo i think that it should be AltitudeLevel.values().length - 1
-        for (int i = 0; i < AltitudeLevel.values().length; i++) {
-            if (h >= AltitudeLevel.values()[i].bottomHeight && h <= AltitudeLevel.values()[i].topHeight) {
+        for (int i = 0; i < AltitudeLevel.values().length - 1; i++) {
+            if (height >= AltitudeLevel.values()[i].bottomHeight && height <= AltitudeLevel.values()[i].topHeight) {
                 return AltitudeLevel.values()[i];
             }
         }

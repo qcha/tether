@@ -96,7 +96,6 @@ public class CalculationUtils {
 //        res.vy = -G * M * U.y / Math.pow(Math.pow(U.x * U.x + U.y * U.y + U.z * U.z, 0.5), 3);
 //        res.vz = -G * M * U.z / Math.pow(Math.pow(U.x * U.x + U.y * U.y + U.z * U.z, 0.5), 3);
 //        Это считает точнее
-
         res.vx = -mu * U.x / Math.pow(Math.pow(U.x * U.x + U.y * U.y + U.z * U.z, 0.5), 3);
         res.vy = -mu * U.y / Math.pow(Math.pow(U.x * U.x + U.y * U.y + U.z * U.z, 0.5), 3);
         res.vz = -mu * U.z / Math.pow(Math.pow(U.x * U.x + U.y * U.y + U.z * U.z, 0.5), 3);
@@ -155,8 +154,9 @@ public class CalculationUtils {
             double A = 1; // Площадь сечения
             // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
             double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
+//            double drag_coefficient = 500; // "Эмпирический коэффициент примерно равный 2"
             double earth_radius = 6371000;
-            if (U.m == 500) {
+            if (U.m == 100) {
                 drag_coefficient = 0;
 //                System.out.println(U.m);
             } else {
@@ -173,13 +173,19 @@ public class CalculationUtils {
             res.vx -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A);
             res.vy -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A);
             res.vz -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A);
+//            res.vx += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx, A);
+//            res.vy += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy, A);
+//            res.vz += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz, A);
+//            System.out.println("dvx = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A) +
+//                    ", dvy = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A) +
+//                    ", dvz = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A));
+//            System.out.println("dc = " + drag_coefficient + ", density = " + Drag.exponentialModelDensity(radv - earth_radius) + ", vy = " + U.vy + ", A = " + A);
 
 //            System.out.println(Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A) + " " +
 //                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A) + " " +
 //                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vz - v_earth.get(2), A));
         }
-
-
+//        System.out.println("RESvy = " + res.vy);
         return (res);
     }
 
@@ -368,9 +374,13 @@ public class CalculationUtils {
         qfileName = new File("TwoBodyQuaternion_" + dateFormat.format(d) + ".txt");
         int n = 0;
         while (tM <= tMaxM) {
+//            System.out.println("U1k1");
             k11 = mult(F2(U1, U2, tM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
+//            System.out.println("U1k2");
             k21 = mult(F2(sum(U1, mult(0.5, k11)), U2, tM + 0.5 * dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
+//            System.out.println("U1k3");
             k31 = mult(F2(sum(U1, mult(0.5, k21)), U2, tM + 0.5 * dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
+//            System.out.println("U1k4");
             k41 = mult(F2(sum(U1, k31), U2, tM + dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
             U1 = sum(U1, mult(1.0 / 6.0, sum(sum(k11, mult(2, k21)), sum(mult(2, k31), k41))));
 //            x1List.add(U1.x);
@@ -379,9 +389,13 @@ public class CalculationUtils {
 //            v1xList.add(U1.vx);
 //            v1yList.add(U1.vy);
 //            v1zList.add(U1.vz);
+//            System.out.println("U2k1");
             k12 = mult(F2(U2, U1, tM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
+//            System.out.println("U2k2");
             k22 = mult(F2(sum(U2, mult(0.5, k12)), U1, tM + 0.5 * dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
+//            System.out.println("U2k3");
             k32 = mult(F2(sum(U2, mult(0.5, k22)), U1, tM + 0.5 * dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
+//            System.out.println("U2k4");
             k42 = mult(F2(sum(U2, k32), U1, tM + dtM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
             U2 = sum(U2, mult(1.0 / 6.0, sum(sum(k12, mult(2, k22)), sum(mult(2, k32), k42))));
 //            x2List.add(U2.x);
@@ -421,7 +435,7 @@ public class CalculationUtils {
             tM += dtM;
 
             //TODO Вынести переменную и добавить в GUI
-            if (n == 1000) {
+            if (n == 10000) {
                 x1List.add(U1.x);
                 y1List.add(U1.y);
                 z1List.add(U1.z);
