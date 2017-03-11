@@ -1,5 +1,7 @@
 package com.github.qcha.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,6 +14,14 @@ public class Drag {
 
     public static double force(double c, double ro, double v, double s) {
         return (c * ro * v * v * s) / 2;
+    }
+
+    public static List<Double> force(double c, double ro, CalculationUtils U, List<Double> v, double s) {
+        List<Double> result = new ArrayList<>();
+        Collections.addAll(result, (c * ro * (U.vx - v.get(0)) * (U.vx - v.get(0)) * s) / 2,
+                                   (c * ro * (U.vy - v.get(1)) * (U.vy - v.get(1)) * s) / 2,
+                                   (c * ro * (U.vz - v.get(2)) * (U.vz - v.get(2)) * s) / 2);
+        return result;
     }
 
     public static double force(double c, double ro, List<Double> v, double s) {

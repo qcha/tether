@@ -129,93 +129,80 @@ public class Main extends Application {
 //        System.out.println(Quaternion.quatMultQuat(q2, q1));
 
         // Данные для относительного равновесия (гравитационная ориентация)
-        double m1 = 500; // масса первого тела
-        double m2 = 100; // масса второго тела
-        double rO = 6500000; // координаты центра масс: (6500000; 0; 0)
-        double c = 2;
-//        double x1 = 6700000;
-//        double a2 = 6700200;
+        double m1 = 1300; // масса первого тела
+        double m2 = 120; // масса второго тела
+        double rO = 6800000; // координаты центра масс: (6500000; 0; 0)
+        double c1 = 1300;
+        double a1 = 1;
         double mu = 398600.4415E9; // гравитационный параметр
-        double l = 100; // длина троса
-        double k = 100; // жесткость троса
-//        double b = 0;
-//        double c = Math.sqrt(a * a + b * b);
-//        double v1 = Math.sqrt(398600.4415E9 / x1);
+        double l = 50; // длина троса
+        double k = 25; // жесткость троса
         double vO = Math.sqrt(mu / rO); // скорость центра масс
-//        double v2 = Math.sqrt(398600.4415E9 / a2);
         double w = vO / rO; // угловая скорость (кол-во движения)
-//        System.out.println(vO);
-//        System.out.println(w * x1);
-//        System.out.println(w * a2);
-        System.out.println("w = " + w);
-
         double mpr = (m1 * m2) / (m1 + m2); // приведенная масса
         double ldl = (k * l) / (k - 3 * w * w * mpr); // длина растянутого троса
-        System.out.println("!!!");
-        System.out.println("ldl = " + ldl);
-
-//        double x11 = rO - ldl / 2;
-//        double x12 = rO + ldl / 2;
-//        double v11 = w * x11;
-//        double v12 = w * x12;
         double r10 = (m2 * ldl) / (m1 + m2);
         double r20 = (m1 * ldl) / (m1 + m2);
         double r1 = rO - (m2 * ldl) / (m1 + m2); // координата х первого тела
-//        double r2 = ldl + r1; // координата х второго тела
-        double r2 = rO + (m1 * ldl) / (m1 + m2);
-        ; // координата х второго тела
-//        double r3 = rO + (m1 * ldl) / (m1 + m2);
-        System.out.println("r1 = " + r1);
-        System.out.println("r2 = " + r2);
-//        System.out.println("r3 = " + r3);
+        double r2 = rO + (m1 * ldl) / (m1 + m2); // координата х второго тела
         double v1 = w * r1; // скорость первого тела
         double v2 = w * r2; // скорость второго тела
-        System.out.println("v1 = " + v1);
-        System.out.println("v2 = " + v2);
-        System.out.println(r2 - r1);
-        double T = (2 * Math.PI) / w;
-        System.out.println("T = " + T);
+//        double T = (2 * Math.PI) / w;
+//        System.out.println("T = " + T);
 
         // Косое относительное равновесие с учетом атмосферы
         double earthR = 6371000; // средний радиус Земли
         double ha = r1 - earthR; // высота первого тела над уровнем моря
-        System.out.println("ha = " + ha);
-//        double ro = 2.44E-08 * Math.exp((120 - ha / 1000) / 9.473); // плотность атмосферы на высоте ha
         double ro = Drag.exponentialModelDensity(ha); // плотность атмосферы на высоте ha
-        System.out.println("ro = " + ro);
-//        double beta = m1 / c; // баллистический коэффициент первого тела
-//        // формула beta = M / (A * Cd), где А у меня = 1, а Cd = 2
-//        double acos = ro * v1 * v1 / (w * w * beta * 6 * ldl); // арккосинус из присланной Вами формулы
-//        double acs = acos - (int) acos;
-//        double alpha = Math.PI - Math.acos(acs);
-//        System.out.println("acos = " + acos);
-//        System.out.println("alpha = " + ((alpha * 180) / Math.PI));
-//        System.out.println("x = " + (r2 - (ldl * Math.cos(Math.toRadians(15)))));
-//        System.out.println("y = " + (ldl * Math.sin(Math.toRadians(15))));
-
-        // Косое относительное равновесие в атмосфере
-        double bb = mpr / c; // m1 OR m2 ???
-        double dpb = k * (rO + ldl) / (k - 3 * w * w * mpr);
-        System.out.println("dpb = " + dpb);
-        double smth = ro * vO * vO / (6 * w * w * dpb * bb);
-        System.out.println("smth: " + smth);
+        double bb = m1 / (c1 * a1); // m1
+        double dpb = k * l / (k - 3 * w * w * mpr);
+        double w_earth = 7.2921158553E-5;
+        double v_earth = w_earth * rO;
+        double smth = ro * (vO - v_earth) * (vO - v_earth) / (6 * w * w * dpb * bb);
         double acos2 = Math.acos(smth);
-//        System.out.println("acos2: " + acos2);
-//        System.out.println(Math.acos(0));
         double alpha2 = Math.PI - acos2;
-        System.out.println("alpha2: " + alpha2);
-        System.out.println("alpha2degrees: " + Math.toDegrees(alpha2));
         double beta2 = alpha2 - Math.PI / 2;
+        double r1x = rO - r10 * Math.cos(beta2);
+        double r1y = 0 - r10 * Math.sin(beta2);
+        double r2x = rO + r20 * Math.cos(beta2);
+        double r2y = 0 + r20 * Math.sin(beta2);
+        double v1y2 = vO - w * r10 * Math.cos(beta2);
+        double v1x2 = w * r10 * Math.sin(beta2);
+        double v2y2 = vO + w * r20 * Math.cos(beta2);
+        double v2x2 = -w * r20 * Math.sin(beta2);
+//        double checkR1 = Math.sqrt(r1x * r1x + r1y * r1y);
+//        double checkR2 = Math.sqrt(r2x * r2x + r2y * r2y);
+//        double checkV1 = Math.sqrt(v1x * v1x + v1y * v1y);
+//        double checkV2 = Math.sqrt(v2x * v2x + v2y * v2y);
+        System.out.println("w = " + w);
+        System.out.println("mpr = " + mpr);
+        System.out.println("ldl = " + ldl);
+        System.out.println("r10 = " + r10);
+        System.out.println("r20 = " + r20);
+        System.out.println("r1 = " + r1);
+        System.out.println("r2 = " + r2);
+        System.out.println("r2check = " + (ldl + r1));
+        System.out.println("v1 = " + v1);
+        System.out.println("v2 = " + v2);
+        System.out.println("ha = " + ha);
+        System.out.println("ro = " + ro);
+        System.out.println("smth: " + smth);
         System.out.println("beta2: " + beta2);
         System.out.println("beta2degrees: " + Math.toDegrees(beta2));
-        System.out.println("r1x: " + (rO - r10 * Math.cos(beta2)));
-        System.out.println("r1y: " + (0 - r10 * Math.sin(beta2)));
-        System.out.println("r2x: " + (rO + r20 * Math.cos(beta2)));
-        System.out.println("r2y: " + (0 + r20 * Math.sin(beta2)));
-        System.out.println("v1x = " + (-v1 * Math.sin(beta2)));
-        System.out.println("v1y = " + (v1 * Math.cos(beta2)));
-        System.out.println("v2x = " + (v2 * Math.sin(beta2)));
-        System.out.println("v2y = " + (v2 * Math.cos(beta2)));
+
+        System.out.println("r1x: " + r1x);
+        System.out.println("r1y: " + r1y);
+        System.out.println("r2x: " + r2x);
+        System.out.println("r2y: " + r2y);
+        System.out.println("v1x2 = " + v1x2);
+        System.out.println("v1y2 = " + v1y2);
+        System.out.println("v2x2 = " + v2x2);
+        System.out.println("v2y2 = " + v2y2);
+        System.out.println("r1sin = " + (r10 * Math.sin(beta2)));
+        System.out.println("r1cos = " + (r10 * Math.cos(beta2)));
+        System.out.println("r2sin = " + (r20 * Math.sin(beta2)));
+        System.out.println("r2cos = " + (r20 * Math.cos(beta2)));
+//        System.out.println("Check = ");
 
         //CHECK
 //        double re = 6371000.0;
@@ -225,7 +212,7 @@ public class Main extends Application {
 //        Collections.addAll(r, re * Math.sin(Math.toRadians(30)), 0., re * Math.cos(Math.toRadians(30)));
 //        List<Double> v_earth = VectorsAlgebra.multV(w_earth, r);
 //        System.out.println(String.valueOf(VectorsAlgebra.absoluteValue(v_earth)));
-//
+
 //        System.out.println(Math.sqrt((r10 * Math.sin(beta2)) * (r10 * Math.sin(beta2)) +
 //                (r10 * Math.cos(beta2)) * (r10 * Math.cos(beta2))) +
 //                Math.sqrt((r20 * Math.sin(beta2)) * (r20 * Math.sin(beta2)) +

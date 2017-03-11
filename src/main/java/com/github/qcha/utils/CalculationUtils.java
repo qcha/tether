@@ -19,6 +19,7 @@ public class CalculationUtils {
     ///////////////////////////////////////////
     public static List<Double> sunPos;
     public static boolean sunSignflag;
+    static List<Double> w_earth = new ArrayList<>(Arrays.asList(0., 0., 7.2921158553E-5));
 
     CalculationUtils(double x, double y, double z, double vx, double vy, double vz, double m) {
         this.x = x;
@@ -150,42 +151,42 @@ public class CalculationUtils {
         }
 
 //        Atmospheric Drag
-        if (drag) {
-            double A = 1; // Площадь сечения
-            // List<Double> lla = ECEF2LLA.conversion(U.x, U.y, U.z);
-            double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
-//            double drag_coefficient = 500; // "Эмпирический коэффициент примерно равный 2"
-            double earth_radius = 6371000;
-            if (U.m == 100) {
-                drag_coefficient = 0;
-//                System.out.println(U.m);
-            } else {
-//                System.out.println(U.m);
+//        System.out.println("Before res = " + res.vx + " " + res.vy + " " + res.vz);
+//        System.out.println("Before res = " + Math.sqrt(res.vx * res.vx + res.vy * res.vy + res.vz * res.vz));
+        DRAG:
+        {
+            if (drag) {
+                double A = 1; // Площадь сечения
+                double drag_coefficient = 2; // "Эмпирический коэффициент примерно равный 2"
+                double earth_radius = 6371000;
+                if (U.m == 120) {
+//                    drag_coefficient = 0;
+//                    System.out.println("Um = " + U.m);
+                    break DRAG;
+                } else if (U.m == 1300) {
+//                    System.out.println("Um = " + U.m);
+                    drag_coefficient = 1300;
+                }
+//                List<Double> w_earth = new ArrayList<>(Arrays.asList(0., 0., 7.2921158553E-5));
+//                Collections.addAll(w_earth, 0., 0., 7.2921158553E-5);
+                List<Double> r = new ArrayList<>(Arrays.asList(U.x, U.y, U.z));
+//                Collections.addAll(r, U.x, U.y, U.z);
+                List<Double> v_earth = VectorsAlgebra.multV(w_earth, r); // Поправка для нахождения относительной скорости
+                double radv = Math.sqrt(Math.pow(U.x, 2) + Math.pow(U.y, 2) + Math.pow(U.z, 2)); // Радиус-вектор
+//            System.out.println("In DragF = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A) + " " +
+//                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A) + " " +
+//                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A));
+                double density = Drag.exponentialModelDensity(radv - earth_radius);
+                List<Double> dragForce = Drag.force(drag_coefficient, density, U, v_earth, A);
+                System.out.println("Drag force = " + Math.sqrt(dragForce.get(0) * dragForce.get(0) + dragForce.get(1) * dragForce.get(1) + dragForce.get(2) * dragForce.get(2)));
+
+                res.vx -= dragForce.get(0);
+                res.vy -= dragForce.get(1);
+                res.vz -= dragForce.get(2);
             }
-            ArrayList<Double> w_earth = new ArrayList<>();
-            Collections.addAll(w_earth, 0., 0., 7.2921158553E-5);
-            ArrayList<Double> r = new ArrayList<>();
-            Collections.addAll(r, U.x, U.y, U.z);
-            List<Double> v_earth = VectorsAlgebra.multV(w_earth, r); // Поправка для нахождения относительной скорости
-            // TODO check if here needs radv or (radv - radEarth)
-            double radv = Math.sqrt(Math.pow(U.x, 2) + Math.pow(U.y, 2) + Math.pow(U.z, 2)); // Радиус-вектор
-
-            res.vx -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A);
-            res.vy -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A);
-            res.vz -= Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A);
-//            res.vx += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx, A);
-//            res.vy += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy, A);
-//            res.vz += Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz, A);
-//            System.out.println("dvx = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vx - v_earth.get(0), A) +
-//                    ", dvy = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vy - v_earth.get(1), A) +
-//                    ", dvz = " + Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv - earth_radius), U.vz - v_earth.get(2), A));
-//            System.out.println("dc = " + drag_coefficient + ", density = " + Drag.exponentialModelDensity(radv - earth_radius) + ", vy = " + U.vy + ", A = " + A);
-
-//            System.out.println(Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vx - v_earth.get(0), A) + " " +
-//                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vy - v_earth.get(1), A) + " " +
-//                    Drag.force(drag_coefficient, Drag.exponentialModelDensity(radv), U.vz - v_earth.get(2), A));
+//        System.out.println("After res = " + res.vx + " " + res.vy + " " + res.vz);
+            System.out.println("After res = " + Math.sqrt(res.vx * res.vx + res.vy * res.vy + res.vz * res.vz));
         }
-//        System.out.println("RESvy = " + res.vy);
         return (res);
     }
 
@@ -340,18 +341,12 @@ public class CalculationUtils {
         List<Double> v2zList = new ArrayList<>();
         List<Boolean> flagList = new ArrayList<>();
         List<List<Double>> resList = new ArrayList<>();
-        CalculationUtils U1 = new CalculationUtils(x1M, y1M, z1M, V1xM, V1yM, V1zM, 100);
-        CalculationUtils U2 = new CalculationUtils(x2M, y2M, z2M, V2xM, V2yM, V2zM, 500);
+        CalculationUtils U1 = new CalculationUtils(x1M, y1M, z1M, V1xM, V1yM, V1zM, 1300);
+        CalculationUtils U2 = new CalculationUtils(x2M, y2M, z2M, V2xM, V2yM, V2zM, 120);
         CalculationUtils k11, k12, k21, k22, k31, k32, k41, k42;
         Date d = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh-mm");
         fileName = new File("TwoBody_" + dateFormat.format(d) + ".txt");
-
-        List<Double> r1 = new ArrayList<>(Arrays.asList(U1.x, U1.y, U1.z));
-        List<Double> r2 = new ArrayList<>(Arrays.asList(U2.x, U2.y, U2.z));
-        List<Double> r = VectorsAlgebra.difference(r2, r1);
-        double dx = VectorsAlgebra.absoluteValue(r) - l;
-        tensionFFlag = dx > 0;
 
         // Quaternions part
 //        ArrayList<Double> i1List = new ArrayList<>();
@@ -374,6 +369,12 @@ public class CalculationUtils {
         qfileName = new File("TwoBodyQuaternion_" + dateFormat.format(d) + ".txt");
         int n = 0;
         while (tM <= tMaxM) {
+            List<Double> r1 = new ArrayList<>(Arrays.asList(U1.x, U1.y, U1.z));
+            List<Double> r2 = new ArrayList<>(Arrays.asList(U2.x, U2.y, U2.z));
+            List<Double> r = VectorsAlgebra.difference(r2, r1);
+            double dx = VectorsAlgebra.absoluteValue(r) - l;
+//            System.out.println("dx = " + dx);
+            tensionFFlag = dx > 0;
 //            System.out.println("U1k1");
             k11 = mult(F2(U1, U2, tM, geoPot, sunGravity, moonGravity, sunPres, drag, k, l), dtM);
 //            System.out.println("U1k2");
@@ -435,7 +436,7 @@ public class CalculationUtils {
             tM += dtM;
 
             //TODO Вынести переменную и добавить в GUI
-            if (n == 10000) {
+            if (n == 50000) {
                 x1List.add(U1.x);
                 y1List.add(U1.y);
                 z1List.add(U1.z);

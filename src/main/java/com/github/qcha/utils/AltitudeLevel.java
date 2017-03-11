@@ -46,7 +46,7 @@ enum AltitudeLevel {
 
     public static AltitudeLevel inInterval(double height) {
         //todo i think that it should be AltitudeLevel.values().length - 1
-        for (int i = 0; i < AltitudeLevel.values().length - 1; i++) {
+        for (int i = 0; i < AltitudeLevel.values().length; i++) {
             if (height >= AltitudeLevel.values()[i].bottomHeight && height <= AltitudeLevel.values()[i].topHeight) {
                 return AltitudeLevel.values()[i];
             }
